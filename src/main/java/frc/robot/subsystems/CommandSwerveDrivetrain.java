@@ -16,6 +16,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -27,7 +28,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
 /**
@@ -246,6 +247,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+        updateOdometry();
     }
 
     private void startSimThread() {
@@ -311,13 +313,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void setupPathPlanner() {
         // Load the RobotConfig from the GUI settings. You should probably
         // store this in your Constants file
-        RobotConfig config;
+        RobotConfig config = null;
         try {
             config = RobotConfig.fromGUISettings();
         } catch (Exception e) {
             // Handle exception as needed
             e.printStackTrace();
-            return;
         }
 
         // Configure AutoBuilder last
@@ -344,5 +345,59 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             },
             this // Reference to this subsystem to set requirements
         );
+    }
+
+    public void updateOdometry() {
+        if (Utils.isSimulation()) return;
+        boolean useMegaTag2 = true; //set to false to use MegaTag1
+        boolean doRejectUpdate = false;
+        if(useMegaTag2 == false)
+        {
+            LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+
+            if(mt1.tagCount == 1 && mt1.rawFiducials.length == 1)
+            {
+                if(mt1.rawFiducials[0].ambiguity > .7)
+                {
+                    doRejectUpdate = true;
+                }
+                if(mt1.rawFiducials[0].distToCamera > 3)
+                {
+                    doRejectUpdate = true;
+                }
+            }
+            if(mt1.tagCount == 0)
+            {
+                doRejectUpdate = true;
+            }
+
+            if(!doRejectUpdate)
+            {
+                setVisionMeasurementStdDevs(VecBuilder.fill(.5,.5,9999999));
+                addVisionMeasurement(
+                    mt1.pose,
+                    mt1.timestampSeconds);
+            }
+        }
+        else if (useMegaTag2 == true)
+        {
+            LimelightHelpers.SetRobotOrientation("limelight", getState().Pose.getRotation().getDegrees(), 0, 0, 0, 0, 0);
+            LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+            if(Math.abs(getPigeon2().getAngularVelocityZWorld().getValueAsDouble()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+            {
+                doRejectUpdate = true;
+            }
+            if(mt2.tagCount == 0)
+            {
+                doRejectUpdate = true;
+            }
+            if(!doRejectUpdate)
+            {
+                setVisionMeasurementStdDevs(VecBuilder.fill(.7,.7,9999999));
+                addVisionMeasurement(
+                    mt2.pose,
+                    mt2.timestampSeconds);
+            }
+        }
     }
 }
