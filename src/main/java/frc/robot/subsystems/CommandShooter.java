@@ -34,6 +34,14 @@ public class CommandShooter extends SubsystemBase {
         }, this);
     }
 
+    public Command unstick() {
+        return Commands.run(() -> {
+            spindexer.set(-1);
+            tunnel.set(-1);
+            shooter.set(-1);
+        }, this);
+    }
+
     public Command idle() {
         return Commands.run(() -> {
             spindexer.set(0);
