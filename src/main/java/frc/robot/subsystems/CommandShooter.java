@@ -6,6 +6,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,8 +20,8 @@ public class CommandShooter extends SubsystemBase {
     public TalonFX shooter = new TalonFX(20);
 
     public CommandShooter() {
-        spindexer.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        tunnel.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        spindexer.configure(new SparkMaxConfig().idleMode(IdleMode.kCoast), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        tunnel.configure(new SparkMaxConfig().idleMode(IdleMode.kCoast), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         shooter.getConfigurator().apply(new TalonFXConfiguration());
     }
 

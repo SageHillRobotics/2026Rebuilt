@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandIntake;
 import frc.robot.subsystems.CommandShooter;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.util.PlatformXboxController;
@@ -39,8 +40,8 @@ public class RobotContainer {
     private final CommandXboxController joystick = new PlatformXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
     public final CommandShooter shooter = new CommandShooter();
+    public final CommandIntake intake = new CommandIntake();
 
     private final SendableChooser<Command> autoChooser;
 
@@ -86,13 +87,17 @@ public class RobotContainer {
         joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // Reset the field-centric heading on left bumper press.
-        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        // // Reset the field-centric heading on left bumper press.
+        // joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
         shooter.setDefaultCommand(shooter.idle());
         joystick.rightTrigger().whileTrue(shooter.shoot());
+
+        intake.setDefaultCommand(intake.idle());
+        joystick.leftTrigger().whileTrue(intake.intake());
+        joystick.leftBumper().onTrue(intake.pivot());
     }
 
     public Command getAutonomousCommand() {
