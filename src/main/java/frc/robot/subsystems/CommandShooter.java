@@ -16,22 +16,19 @@ public class CommandShooter extends SubsystemBase {
     public SparkMax spindexer = new SparkMax(5, MotorType.kBrushless);
     public SparkMax tunnel = new SparkMax(23, MotorType.kBrushless);
 
-    public TalonFX rightShooter = new TalonFX(20);
-    public TalonFX leftShooter = new TalonFX(22);
+    public TalonFX shooter = new TalonFX(20);
 
     public CommandShooter() {
         spindexer.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         tunnel.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightShooter.getConfigurator().apply(new TalonFXConfiguration());
-        leftShooter.getConfigurator().apply(new TalonFXConfiguration());
+        shooter.getConfigurator().apply(new TalonFXConfiguration());
     }
 
     public Command shoot() {
         return Commands.run(() -> {
             spindexer.set(1);
             tunnel.set(1);
-            rightShooter.set(1);
-            leftShooter.set(-1);
+            shooter.set(1);
         }, this);
     }
 
@@ -39,8 +36,7 @@ public class CommandShooter extends SubsystemBase {
         return Commands.run(() -> {
             spindexer.set(0);
             tunnel.set(0);
-            rightShooter.set(0);
-            leftShooter.set(0);
+            shooter.set(0);
         }, this);
     }
 }
