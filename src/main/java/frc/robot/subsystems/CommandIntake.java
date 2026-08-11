@@ -1,10 +1,8 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -19,23 +17,21 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CommandIntake extends SubsystemBase {
-    public static final double PIVOT_GEAR_RATIO = 100;
+    public static final double PIVOT_GEAR_RATIO = 100; // TODO find PIVOT_GEAR_RATIO
 
     public static final Angle PIVOT_POSITION_IDLE = Degrees.of(5);
     public static final Angle PIVOT_POSITION_ACTIVE = Degrees.of(70);
 
-    public static final double PIVOT_STATOR_LIMIT = 20;
-
     public TalonFX intake = new TalonFX(4);
     public TalonFX pivot = new TalonFX(9);
 
-    public PIDController pivotPID = new PIDController(3, 0, 0);
+    public PIDController pivotPID = new PIDController(PIVOT_GEAR_RATIO * 1 / 100, 0, 0); // TODO tune pivotPID
 
     public boolean pivotActive = false;
 
     public CommandIntake() {
         intake.getConfigurator().apply(new TalonFXConfiguration());
-        
+
         pivot.getConfigurator().apply(new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
                 .withNeutralMode(NeutralModeValue.Brake))
@@ -45,10 +41,7 @@ public class CommandIntake extends SubsystemBase {
                 .withReverseSoftLimitEnable(true)
                 .withReverseSoftLimitThreshold(Degrees.of(0))
                 .withForwardSoftLimitEnable(true)
-                .withForwardSoftLimitThreshold(PIVOT_POSITION_ACTIVE.plus(Degrees.of(10))))
-            .withCurrentLimits(new CurrentLimitsConfigs()
-                .withStatorCurrentLimit(Amps.of(PIVOT_STATOR_LIMIT))
-                .withStatorCurrentLimitEnable(true)));
+                .withForwardSoftLimitThreshold(PIVOT_POSITION_ACTIVE.plus(Degrees.of(10)))));
 
         pivot.setPosition(0);
     }

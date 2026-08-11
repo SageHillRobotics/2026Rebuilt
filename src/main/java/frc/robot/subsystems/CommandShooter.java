@@ -25,6 +25,7 @@ public class CommandShooter extends SubsystemBase {
         shooter.getConfigurator().apply(new TalonFXConfiguration());
     }
 
+    // TODO find shooter motor inverts
     public Command shoot() {
         return Commands.run(() -> {
             spindexer.set(1);
