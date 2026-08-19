@@ -40,7 +40,7 @@ public class RobotContainer {
     private final CommandXboxController joystick = new PlatformXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    // public final CommandShooter shooter = new CommandShooter();
+    public final CommandShooter shooter = new CommandShooter();
     // public final CommandIntake intake = new CommandIntake();
 
     private final SendableChooser<Command> autoChooser;
@@ -92,9 +92,9 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        // shooter.setDefaultCommand(shooter.idle());
-        // joystick.rightTrigger().whileTrue(shooter.shoot());
-        // joystick.x().whileTrue(shooter.unstick());
+        shooter.setDefaultCommand(shooter.idle());
+        joystick.rightTrigger().whileTrue(shooter.shoot());
+        joystick.x().whileTrue(shooter.unstick());
 
         // intake.setDefaultCommand(intake.idle());
         // joystick.leftTrigger().whileTrue(intake.intake());
