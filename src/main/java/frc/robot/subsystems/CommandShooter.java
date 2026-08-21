@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CommandShooter extends SubsystemBase {
     public SparkMax spindexer = new SparkMax(5, MotorType.kBrushless);
-    public SparkMax tunnel = new SparkMax(23, MotorType.kBrushless);
 
+    public TalonFX tunnel = new TalonFX(23);
     public TalonFX shooter = new TalonFX(20);
 
     public CommandShooter() {
         spindexer.configure(new SparkMaxConfig().idleMode(IdleMode.kCoast), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        tunnel.configure(new SparkMaxConfig().idleMode(IdleMode.kCoast), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        tunnel.getConfigurator().apply(new TalonFXConfiguration());
         shooter.getConfigurator().apply(new TalonFXConfiguration());
     }
 
