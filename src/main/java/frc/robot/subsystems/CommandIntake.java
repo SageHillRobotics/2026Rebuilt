@@ -25,7 +25,7 @@ public class CommandIntake extends SubsystemBase {
     public TalonFX intake = new TalonFX(4);
     public TalonFX pivot = new TalonFX(9);
 
-    public PIDController pivotPID = new PIDController(PIVOT_GEAR_RATIO * 1 / 100, 0, 0); // TODO tune pivotPID
+    public PIDController pivotPID = new PIDController(PIVOT_GEAR_RATIO / 100, 0, 0); // TODO tune pivotPID
 
     public boolean pivotActive = false;
 
