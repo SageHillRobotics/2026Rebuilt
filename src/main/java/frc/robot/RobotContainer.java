@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandGrab;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.util.PlatformXboxController;
 
@@ -39,6 +40,9 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    // create new CommandGrab
+    CommandGrab grabSubsystem = new CommandGrab();
+
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -53,6 +57,12 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        // CommandGrab idle command
+        // CommandGrab active commands
+
+        grabSubsystem.setDefaultCommand(grabSubsystem.idle());
+        joystick.a().onTrue(grabSubsystem.active());
+
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
